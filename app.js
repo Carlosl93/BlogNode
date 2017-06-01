@@ -5,9 +5,11 @@ const bodyParser = require('body-parser');
 const expressValidator = require('express-validator');
 const flash = require('connect-flash');
 const session = require('express-session');
+const passport = require('passport');
+const config = require('./config/database')
 
 // Conenct to database
-mongoose.connect('mongodb://localhost/nodekb');
+mongoose.connect(config.database);
 let db = mongoose.connection;
 
 db.once('open', () => {
@@ -54,9 +56,18 @@ let Article = require('./models/articles');
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
+// Passport config
+require('./config/passport')(passport);
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.get('*', (req, res, next) => {
+  res.locals.user = req.user || null;
+  next();
+});
+
 // Home Route
 app.get('/', (req, res) => {
-
   Article.find({}, (err, articles) => {
     if(err) {
         console.log(err);
@@ -71,6 +82,9 @@ app.get('/', (req, res) => {
 
 let articles = require('./routes/articles');
 app.use('/articles', articles);
+
+let users = require('./routes/user');
+app.use('/users', users);
 
 
 // Start server

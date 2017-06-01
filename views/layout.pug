@@ -16,10 +16,20 @@ html
           a.navbar-brand(href='/') Knowledgebase
         #navbar.collapse.navbar-collapse
           ul.nav.navbar-nav
-            li.active
-              a(href='/') Home
             li
-              a(href='/articles/add') Add Article
+              a(href='/') Home
+            if user
+              li
+                a(href='/articles/add') Add Article
+          ul.nav.navbar-nav.navbar-right
+            if user 
+              li 
+                a(href='users/logout') Logout
+            else 
+              li
+                a(href='/users/register') Register
+              li
+                a(href='/users/login') Login
         // /.nav-collapse
 
     .container
